@@ -128,7 +128,7 @@ public class State {
             Precinct precinct = piter.next();
 //            System.out.println("precinct to move" + precinct);
             if (precinct.getDistrict().continuity(precinct)) {
-//                System.out.println("continuitygood");
+                System.out.println("continuitygood");
 
                 for (Edge edge : precinct.getEdges()) {
                     final Precinct neighbor = (Precinct) edge.getNeighbor(precinct);
@@ -141,7 +141,7 @@ public class State {
                     }
                 }
             } else {
-//                System.out.println("continuity bad");
+                System.out.println("continuity bad");
             }
         }
 //        findCandidateMove()

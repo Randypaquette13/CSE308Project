@@ -5,6 +5,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -83,7 +84,41 @@ public class District extends Cluster {
     }
 
     public boolean continuity(Precinct p) {
-        LinkedList<Precinct> precincts = new LinkedList<>();//precincts in this district that are adj to p
+        LinkedList<Precinct> visited = new LinkedList<>();
+        visited.add(p);
+        ArrayList<Precinct> queue = new ArrayList<>();
+        Precinct start = null;
+        for(Precinct candidateStart : getPrecinctSet()){
+            if(candidateStart != p){
+                start = candidateStart;
+                break;
+            }
+        }
+        if(start == null){
+            return false;
+        }
+        queue.add(start);
+        while(!queue.isEmpty()){
+            Precinct next = queue.remove(0);
+            if(!visited.contains(next) && next != p){
+                visited.add(next);
+                for(Edge e : next.getEdges()){
+                    if(!visited.contains(e.getNeighbor(p)) && !queue.contains(e.getNeighbor(p)) &&
+                            next.getDistrict().equals(((Precinct)e.getNeighbor(next)).getDistrict())){
+                        queue.add((Precinct)e.getNeighbor(p));
+                    }
+                }
+            }
+        }
+        for(Precinct precinct : getPrecinctSet()){
+            if(!visited.contains(precinct)){
+                return false;
+            }
+        }
+        return true;
+
+
+        /*LinkedList<Precinct> precincts = new LinkedList<>();//precincts in this district that are adj to p
         for(Edge e : p.getEdges()) {
             final Precinct neighbor = (Precinct)e.getNeighbor(p);
             if(neighbor.getDistrict().equals(p.getDistrict())) {
@@ -104,7 +139,7 @@ public class District extends Cluster {
             }
         }
         return true;
-
+*/
     }
 
 
